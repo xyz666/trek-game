@@ -318,7 +318,7 @@ class TrekGame(object):
                         if vert < 0 or vert > 7 or horiz < 0 or horiz > 7:
                             out = True
                             # Calculate new sector and join ends of the galaxy
-                            sector = self.join(sector + 8*horiz//8 + vert//8)
+                            sector = self.join(sector + 8*(horiz//8) + vert//8)
                         else:
                             # If we are in the original sector we can't go through solid objects! So reset course position 1 click
                             # Inefficient - does this for warp steps even if we can't move.
