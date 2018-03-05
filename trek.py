@@ -254,7 +254,7 @@ class TrekGame(object):
                 print(" * ", end='')
             else:
                 print("-O-", end='')
-        print
+        print()
         # Work out condition
         if klingons == False:
             condition = "Green"
@@ -272,12 +272,12 @@ class TrekGame(object):
         # Return condition status
         return condition
 
-    def helm(self, galaxy, sector, energy, cur_sec, epos,stardate, command_args=None, test_direction=None, test_warp=None):
+    def helm(self, galaxy, sector, energy, cur_sec, epos, stardate, command_args=None, test_direction=None, test_warp=None):
         try:
             direction = command_args[0]
         except IndexError:
             try:
-                direction = int(self.test_input('Course direction(1-9)? ', test_direction))
+                direction = int(self.test_input('Course direction (1-4, 6-9)? ', test_direction))
             except ValueError:
                 direction = -1
         if 1 <= direction <= 9 and direction !=5:
@@ -301,7 +301,7 @@ class TrekGame(object):
                 # Check there is sufficient energy
                 if warp <= energy:
                     # Reduce energy by warp amount
-                    energy = energy - warp
+                    energy -= warp
                     # Remove Enterprise from current position
                     cur_sec[epos] = 0
                     # Calculate the new stardate
@@ -409,7 +409,7 @@ class TrekGame(object):
                 direction = command_args[0]
             except IndexError:
                 try:
-                    direction = int(self.test_input('Fire in direction(1-4,6-9)? ', test_arg))
+                    direction = int(self.test_input('Fire in direction (1-4, 6-9)? ', test_arg))
                 except ValueError:
                     direction = -1
             if 1 <= direction <= 9 and direction !=5:
