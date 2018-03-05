@@ -305,7 +305,7 @@ class TrekGame(object):
                     # Remove Enterprise from current position
                     cur_sec[epos] = 0
                     # Calculate the new stardate
-                    stardate += 0.1*warp
+                    stardate = round(stardate + 0.1*warp, 1)
                     # For the moment, assume movement leaves us in original sector
                     out = False
                     # Move the Enterprise warp units in the specified direction
