@@ -67,12 +67,20 @@ class TrekGame(object):
             # 4 = Photon torpedoes
             # 5 = Shields
             # 6 = Resign
-            command=int(self.test_input('Command (1-6, 0 for help)? ', test_arg))
+
+            _input = self.test_input('Command (1-6, 0 for help)? ', test_arg).split()
+            command_args = []
+            try:
+                command = int(_input[0])
+                if len(_input) > 1:
+                    command_args = [int(arg) for arg in _input[1:]]
+            except (IndexError, ValueError) as e:
+                command = -1
+
             if command == 0:
                 self.showhelp()
             elif command == 1:
-                new_sector,energy,ent_position,stardate=self.helm(galaxy,sector,
-                energy,current_sector,ent_position,stardate)
+                new_sector, energy, ent_position, stardate = self.helm(galaxy, sector, energy, current_sector, ent_position, stardate, command_args)
                 # If we're still in the same sector as before, draw the Enterprise
                 if sector == new_sector:
                     current_sector[ent_position] = 4
@@ -263,9 +271,15 @@ class TrekGame(object):
                 condition = "Docked"
         # Return condition status
         return condition
-        
-    def helm(self,galaxy,sector,energy,cur_sec,epos,stardate, test_direction=None, test_warp=None):
-        direction=int(self.test_input('Course direction(1-9)? ', test_direction))
+
+    def helm(self, galaxy, sector, energy, cur_sec, epos,stardate, command_args=None, test_direction=None, test_warp=None):
+        try:
+            direction = command_args[0]
+        except IndexError:
+            try:
+                direction = int(self.test_input('Course direction(1-9)? ', test_direction))
+            except ValueError:
+                direction = -1
         if 1 <= direction <= 9 and direction !=5:
             # Work out the horizontal and vertical co-ordinates
             # of the Enterprise in the current sector
@@ -275,7 +289,13 @@ class TrekGame(object):
             # And calculate the direction component of our course vector
             hinc, vinc = self.calcvector(direction)
             # How far do we need to move?
-            warp=int(self.test_input('Warp (1-63)? ', test_warp))
+            try:
+                warp = command_args[1]
+            except IndexError:
+                try:
+                    warp = int(self.test_input('Warp (1-63)? ', test_warp))
+                except ValueError:
+                    warp = -1
             # If warp selected is in legal range move Enterprise
             if 1 <= warp <= 63:
                 # Check there is sufficient energy
@@ -329,9 +349,15 @@ class TrekGame(object):
                 time.sleep(0.2 * self.second_coefficient)
             print()
         print()
-        
-    def phasers(self, condition,shields,energy,sector,epos,ksec, test_arg=None):
-        power=int(self.test_input('Phaser energy? ', test_arg))
+
+    def phasers(self, condition, shields, energy, sector, epos, ksec, command_args=None, test_arg=None):
+        try:
+            power = command_args[0]
+        except IndexError:
+            try:
+                power = int(self.test_input('Phaser energy? ', test_arg))
+            except ValueError:
+                power = -1
         if 0 < power <= energy:
             # Reduce available energy by amount directed to phaser banks
             energy -= power
@@ -374,12 +400,18 @@ class TrekGame(object):
         else:
             print("Not enough energy, Captain!")
         return shields, energy, sector, ksec
-        
-    def photontorpedoes(self, torpedoes,sector,epos,ksec, test_arg=None):
+
+    def photontorpedoes(self, torpedoes, sector, epos, ksec, command_args=None, test_arg=None):
         if torpedoes < 1:
             print("No photon torpedoes left, captain!")
         else:
-            direction=int(self.test_input('Fire in direction(1-4,6-9)? ', test_arg))
+            try:
+                direction = command_args[0]
+            except IndexError:
+                try:
+                    direction = int(self.test_input('Fire in direction(1-4,6-9)? ', test_arg))
+                except ValueError:
+                    direction = -1
             if 1 <= direction <= 9 and direction !=5:
                 time.sleep(0.2 * self.second_coefficient)
                 # Work out the horizontal and vertical co-ordinates of the Enterprise in the current sector
@@ -422,8 +454,15 @@ class TrekGame(object):
                 print("Your command is not logical, Captain.")
         return torpedoes, sector, ksec
 
-    def addshields(self, energy,shields, test_arg=None):
+    def addshields(self, energy, shields, command_args=None, test_arg=None):
         # Add energy to shields
+        try:
+            power = command_args[0]
+        except IndexError:
+            try:
+                power = int(self.test_input('Energy to shields? ', test_arg))
+            except ValueError:
+                power = -1
         if 0 < power <= energy:
             energy -= power
             shields += power
